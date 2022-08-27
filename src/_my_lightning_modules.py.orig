@@ -16,8 +16,6 @@ class ReviewDataset(Dataset):
         self.out_inputs = []
         for df_dict in df.to_dict("records"):
             inputs = tokenizer(df_dict["review_body"], truncation=True)
-            #Editted by Matsuno
-            #inputs = tokenizer(df_dict["review_body"], truncation=True, add_special_tokens=True, pad_to_max_length=True)
             if "label" in df_dict:
                 inputs.update({"label": df_dict["label"]})
             self.out_inputs.append(inputs)
@@ -35,7 +33,6 @@ class ReviewDataModule(pl.LightningDataModule):
         self.save_hyperparameters(hparams)
 
         self.df = pd.read_json(hparams.input_file, orient="records", lines=True)
-        print("hparams:", self.hparams.model_name)
         self.tokenizer = AutoTokenizer.from_pretrained(self.hparams.model_name)
         self.batch_size = hparams.batch_size
 
@@ -79,7 +76,8 @@ class ReviewDataModule(pl.LightningDataModule):
 
     def _collate_fn(self, batch):
         output_dict = {}
-        for i in ["input_ids", "token_type_ids", "attention_mask"]:
+        #for i in ["input_ids", "token_type_ids", "attention_mask"]:
+        for i in ["input_ids", "attention_mask"]:
             output_dict[i] = nn.utils.rnn.pad_sequence(
                 [torch.LongTensor(b[i]) for b in batch],
                 batch_first=True,
