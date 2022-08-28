@@ -220,6 +220,7 @@ zip team_z -r team_z
 - `./data/evaluation/predict_helpful_votes/cl-tohoku_bert-base-japanese_lr1e-5/team_z.zip`をYANSの運営委員へ提出。
 - zipファイル名はチーム名がわかるようにしてください。
 
+## チームE: RoBEEEEERTa による差分
 ### テーブルデータへの変換
 
 LightGBM などのアルゴリズムを実装したモジュールへの入力にできるようなかたちに変換する
