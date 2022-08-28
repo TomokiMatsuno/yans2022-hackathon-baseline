@@ -219,3 +219,33 @@ zip team_z -r team_z
 ```
 - `./data/evaluation/predict_helpful_votes/cl-tohoku_bert-base-japanese_lr1e-5/team_z.zip`をYANSの運営委員へ提出。
 - zipファイル名はチーム名がわかるようにしてください。
+
+### テーブルデータへの変換
+
+LightGBM などのアルゴリズムを実装したモジュールへの入力にできるようなかたちに変換する
+
+```
+入力ファイルのパスに合わせてRUN_NAMEとMODEを変更する
+# 訓練データ（言語モデルのファインチューニングで使った valid データを用いる）
+bash ./script/preprocess_table.sh
+# leader board データ
+bash ./script/preprocess_table_leader_board.sh
+# 最終評価データ
+bash ./script/preprocess_table_final.sh
+```
+
+### 機械翻訳によるデータ拡張
+
+review\_body を抽出し、翻訳しやすい単位に文分割する。
+
+```
+# 抽出された review_body を文分割
+python src/split_to_sents_spacy.py < training-review_body.txt > training-review_body.sent.txt
+
+# 文分割された日本語データを英語に翻訳
+今回は [JParaCrawl](https://www.kecl.ntt.co.jp/icl/lirg/jparacrawl/) を使用
+セットアップ方法などは上記URLを参照
+
+# 翻訳結果からベースライン実装への入力ファイルを作成
+python src/make_translated_traininng_data.py -training_file data/dataset_shared_initial/training-all.jsonl -src_info data/translation/training-review_body-spacy.tsv -trans_result data/translation/training-review_body-translated.en -out_file data/translation/training-review_body.en.jsonl
+```
